@@ -2,7 +2,7 @@
 
 ### Q1: engine_type 
 
-````
+```
 MySQL engine /type 类型 InnoDB /MYISAM/ MERGE /BDB/HEAP 的区别
 看 MySQL 参考手册 发现 CREATE TABLE 时有多种数据库存储引擎：
 TYPE = {BDB | HEAP | ISAM | InnoDB | MERGE | MRG_MYISAM | MYISAM }
@@ -16,6 +16,12 @@ MyISAM 类型的表强调的是性能，其执行数度比 InnoDB 类型更快�
 移值性 :
 MyISAM 类型的二进制数据文件可以在不同操作系统中迁移。也就是可以直接从 Windows 系统拷贝到 linux 系统中使用。
 
+```
+
+[](./images/d65de98baebb7a769e2fb4b7.jpg)
+
+
+```
 
 ### 
  MyISAM ：默认的 MySQL 插件式存储引擎，它是在 Web 、数据仓储和其他应用环境下最常使用的存储引擎之一。注意，通过更改 STORAGE_ENGINE 配置变量，能够方便地更改 MySQL 服务器的默认存储引擎。
