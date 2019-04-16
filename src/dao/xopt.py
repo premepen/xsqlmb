@@ -4,18 +4,7 @@
 包含但不限于 create / update / alter / delete
 """
 
-class SqlModeOpreationClass():
+class SqlTableOpreationClass():
+    def __init__(self, table_name):
+        self.table_name = table_name
 
-    def __init__(self):
-        pass
-
-    def _create(self):
-        pass
-
-    def _update(self):
-        pass
-
-    def _delete(self):
-        pass
-
-    

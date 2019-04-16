@@ -1,6 +1,6 @@
 import pymysql
 
-from ..cfgs.basicconfig import MPP_CONFIG
+from cfgs.basicconfig import MPP_CONFIG
 
 
 
