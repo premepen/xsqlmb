@@ -20,6 +20,20 @@ services:
         customize_net:
           ipv4_address: 192.168.132.101
 
+   syslog:
+      container_name: syslog-pyrecever
+      image: 'actanble/syslog2'
+      volumes:
+        - /root/spool/syslog-ng/etc/:/spool/syslog-ng/etc/
+        - /root/spool/syslog-ng/etc/zxsyslog/:/spool/zsyslog/
+        - /opt/log/:/opt/log/
+      command: /bin/bash /root/active.sh
+      ports:
+        - "23033:23033"
+      networks:
+        customize_net:
+          ipv4_address: 192.168.132.55
+
 networks:
   customize_net:
     driver: bridge
@@ -27,3 +41,4 @@ networks:
       driver: default
       config:
         - subnet: 192.168.132.0/24
+

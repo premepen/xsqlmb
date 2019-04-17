@@ -1,4 +1,4 @@
-from cfgs.basicconfig import default_charset, default_engine, charset_types, engine_types
+from cfgs.basicConfig import default_charset, default_engine, charset_types, engine_types
 
 
 class SqlModeClass():
@@ -54,6 +54,10 @@ class SqlModeClass():
     def _create(self):
         from ltool.sqlconn import sql_action
         sql_action( self._sql_create_str() )
+
+        from cfgs.logConfig import logging
+        logging.warning("创建数据表成功")
+
 
 
     def get_columns_strs(self):
