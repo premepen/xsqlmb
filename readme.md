@@ -14,3 +14,5 @@
 
 
 ## [第一版本位置](./src/readme.md)
+
+- APP名字就是这个了`xsqlmb`
