@@ -30,3 +30,6 @@ charset_types = ["utf8", "utf32","gbk", "gb2312","binnary", "utf32", "utf16", "u
 engine_types = ["InnoDB", "MyISAM"]
 
 
+filter_types = ["between", "contains", "regexp", "group"]
+
+
