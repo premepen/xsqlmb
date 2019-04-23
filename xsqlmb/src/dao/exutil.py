@@ -30,7 +30,7 @@ class MutiTypesInsets2SqlClass():
             _sql_str = "(\'" + "\',\'".join(_item) + "\')"
             _sql_str_list.append(_sql_str)
         _query_sql = """insert into {table_name}({columns}) values {values_str};""".format(
-            values_str=", ".join(_sql_str_list),
+            values_str=", ".join([str(x) for x in _sql_str_list]),
             table_name=self.table_name,
             columns=columns_order
         )
