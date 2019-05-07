@@ -7,7 +7,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
-from website.settings import LocalAccessLogTable
+
+from xsqlmb.api.logstash.cfgs.configs import WAF_ACCESS_LOG_SQL_TABLE
+from xsqlmb.src.ltool.sqlconn import from_sql_get_data
+
 SEARCH_CONDOTION_TABLE_NAME = "search_condition"
 
 
@@ -19,10 +22,9 @@ def get_local_db():
     return MongoConn(ldc).db[SEARCH_CONDOTION_TABLE_NAME]
 
 def get_data_from_sqls(key, limit=15):
-    from wafmanage.utils.db_utils import from_sql_get_data
 
     return [x[key] for x in from_sql_get_data("""select {key}, count({key}) as c from {table} group by {key} order by c desc limit {limit};""".format(
-        table=LocalAccessLogTable, limit=limit, key=key) )["data"] ]
+        table=WAF_ACCESS_LOG_SQL_TABLE, limit=limit, key=key) )["data"] ]
 
 
 def get_default_conditions():

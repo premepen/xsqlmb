@@ -1,6 +1,6 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 
-from .log_api_views import accsslog_search, seclog_search
+from xsqlmb.api.logstash.search.views.log_api_views import accsslog_search, seclog_search
 
 logsearch_urlparterns = [
     # url(r'^accsslog_search', include(accs_router.urls)),
@@ -8,14 +8,14 @@ logsearch_urlparterns = [
     url(r'^ss', seclog_search),
 ]
 
-from .log_api_view2 import jla_search1, jla_search2
+from xsqlmb.api.logstash.search.views.log_api_view2 import jla_search1, jla_search2
 logsearch_urlparterns.extend([
     # url(r'^accsslog_search', include(accs_router.urls)),
     url(r'^get_jl_accsslog', jla_search1),
     url(r'^tj_bytes_timedelta', jla_search2),
 ])
 
-from .condition_veiws import get_common_conditions, set_common_conditions
+from xsqlmb.api.logstash.search.views.condition_veiws import get_common_conditions, set_common_conditions
 logsearch_urlparterns.extend([
     # url(r'^accsslog_search', include(accs_router.urls)),
     url(r'^get_common_conditions', get_common_conditions),

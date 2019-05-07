@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
-from .seclog_search3 import seclog_search_jl, seclog_search3, seclog_search_condition, get_all_info_dependon_auditid
+from xsqlmb.api.logstash.search.utils.seclog_search3 import seclog_search_jl, seclog_search3, seclog_search_condition, get_all_info_dependon_auditid
 
 
 @api_view(['POST'])
@@ -100,7 +100,12 @@ def seclog_condition_search(request):
 def seclog_detail_by_audlogid(request):
     data = request.GET if request.method == 'GET' else request.data
     audit_logid = data["audit_logid"]
+
+
     res_data = get_all_info_dependon_auditid(audit_logid=audit_logid)
+
+
+
     try:
         return Response({"datas": res_data})
     finally:

@@ -1,6 +1,4 @@
 DROP TABLE IF EXISTS `waf_alert_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `waf_alert_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `audit_logid` varchar(155) NOT NULL,
@@ -21,27 +19,9 @@ CREATE TABLE `waf_alert_log` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `modseclog_audit_logid_1af5d08d_uniq` (`audit_logid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10055 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
---DROP TABLE IF EXISTS `waf_modsec_hinfo`;
---/*!40101 SET @saved_cs_client     = @@character_set_client */;
---/*!40101 SET character_set_client = utf8 */;
---CREATE TABLE `waf_modsec_hinfo` (
---  `id` int(11) NOT NULL AUTO_INCREMENT,
---  `audit_logid` varchar(155) NOT NULL,
---  `rule_id` int(11) NOT NULL,
---  `msg` varchar(255) NOT NULL,
---  `matched_data` longtext NOT NULL,
---  PRIMARY KEY (`id`),
---  KEY `rid_index` (`rule_id`)
---) ENGINE=InnoDB AUTO_INCREMENT=76562 DEFAULT CHARSET=utf8;
---/*!40101 SET character_set_client = @saved_cs_client */;
 
 
 DROP TABLE IF EXISTS `waf_access_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `waf_access_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `request_id` varchar(255) NOT NULL,
@@ -55,7 +35,7 @@ CREATE TABLE `waf_access_log` (
   `upstream_response_time` float(7,4) NOT NULL DEFAULT 0.0,
   `upstream_status` varchar(55) NOT NULL,
   `status` int(11) NOT NULL,
-  `url` varchar(255) NOT NULL,
+  `request_url` varchar(255) NOT NULL,
   `time_local` datetime(6) NOT NULL,
   `timestamp` datetime(6) NOT NULL,
   `request` longtext NOT NULL,
@@ -70,15 +50,11 @@ CREATE TABLE `waf_access_log` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `request_id_1af5d08d_uniq` (`request_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1111 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 
 DROP TABLE IF EXISTS `alertlog_detail`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `alertlog_detail` (
   `audit_logid` varchar(100) NOT NULL,
  `detaild`  json DEFAULT NULL,
   PRIMARY KEY (`audit_logid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+

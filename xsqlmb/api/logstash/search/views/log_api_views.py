@@ -8,21 +8,19 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
-from website.settings import LocalAccessLogTable
-from wafmanage.permissions.plat_permissions import SecurityPermission
+
+from xsqlmb.api.logstash.cfgs.configs import WAF_ACCESS_LOG_SQL_TABLE
+from xsqlmb.src.ltool.sqlconn import from_sql_get_data
+from ..utils.access_search import accsslog_search2
+from ..utils.seclog_search import seclog_search2
 
 @api_view(['POST'])
-@permission_classes((IsAuthenticated, SecurityPermission))
+@permission_classes((IsAuthenticated, ))
 def accsslog_search(request):
-    # print("========================================")
     data = request.data
-    # print(data)
 
-    # data = JSONParser().parse(request)
-    # serializer = AccesslogSearchSerializer(data=data)
-    # return Response(serializer.update(validated_data=data))
     instance = dict(
-        TableName= LocalAccessLogTable,
+        TableName= WAF_ACCESS_LOG_SQL_TABLE,
         request_method= data["request_method"] if "request_method" in data.keys() else None,
         request_version=data["request_version"] if "request_version" in data.keys() else None,
         remote_addr=data["remote_addr"] if "remote_addr" in data.keys() else None,
@@ -41,8 +39,7 @@ def accsslog_search(request):
         end_time=data["end_time"] if "end_time" in data.keys() else None,
         orderby_dt=data["orderby_dt"] if "orderby_dt" in data.keys() else True,
     )
-    from wafmanage.utils.db_utils import from_sql_get_data
-    from .prescan import accsslog_search2
+
     _objs = from_sql_get_data(accsslog_search2(**instance))["data"]
 
     # return Response(_objs)
@@ -59,7 +56,7 @@ def accsslog_search(request):
 
 
 @api_view(['POST'])
-@permission_classes((IsAuthenticated, SecurityPermission))
+@permission_classes((IsAuthenticated, ))
 def seclog_search(request):
     data = request.data
     instance = dict(
@@ -77,8 +74,6 @@ def seclog_search(request):
         end_time=data["end_time"] if "end_time" in data.keys() else None,
     )
 
-    from wafmanage.utils.db_utils import from_sql_get_data
-    from .seclog_search import seclog_search2
     _objs = from_sql_get_data(seclog_search2(**instance))["data"]
     # return Response(_objs)
     ### 开始准备分页

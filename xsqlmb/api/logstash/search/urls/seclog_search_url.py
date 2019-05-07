@@ -1,6 +1,6 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 
-from .seclog_search_views import ip_attack_catecount_splitby_datetype , \
+from xsqlmb.api.logstash.search.views.seclog_search_views import ip_attack_catecount_splitby_datetype , \
     seclog_jl, seclog_condition_search, seclog_detail_by_audlogid
 
 seclog_search_urlparterns = [
