@@ -2,7 +2,8 @@
 import sys
 import re
 from xsqlmb.api.logstash.utils.dt_tool import get_pydt_based_logdt
-from xsqlmb.api.logstash.cfgs.configs import WAF_ACCESS_LOG_SQL_TABLE, WAF_ALERT_LOG_SQL_TABLE
+from xsqlmb.api.logstash.cfgs.configs import WAF_ACCESS_LOG_SQL_TABLE, \
+    WAF_ALERT_LOG_SQL_TABLE, WAF_ALERT_LOG_DETAILED_SQL_TABLE
 #from utils.django_module import django_setup
 try:
     from xsqlmb.src.cfgs.logConfig import logging
@@ -11,7 +12,8 @@ except:
 
 from uuid import uuid4
 from xsqlmb.api.logstash.scripts.get_common_logs import TxTCommonLog
-from xsqlmb.src.ltool.sqlconn import from_sql_get_data, sql_action
+from xsqlmb.src.dao.exutil import MutiTypesInsets2SqlClass
+#from xsqlmb.src.ltool.sqlconn import from_sql_get_data, sql_action
 
 
 class LogToSql():
@@ -88,14 +90,21 @@ class LogToSql():
         _keys = cols
 
         for x in [x + 1 for x in range(page_count)]:
+            nad_list = list(p.page(x).object_list)
             try:
-                nad_list = list(p.page(x).object_list)
-                from xsqlmb.src.dao.exutil import MutiTypesInsets2SqlClass
-                MutiTypesInsets2SqlClass(table_name=WAF_ALERT_LOG_SQL_TABLE).arrays2sql2(
+                _insert_num = MutiTypesInsets2SqlClass(table_name=WAF_ALERT_LOG_SQL_TABLE).arrays2sql2(
                     nad_list, columns_order=_columns, keys_list=_keys)
-                seccess_insert_num += len(nad_list)
+                seccess_insert_num += len(_insert_num)
             except:
-                logging.error("告警日志格式化存在键值对异常。")
+                logging.error("告警日志格式化存在键值对异常或者重复插入。")
+
+            finally:
+                import json
+                _detailed_list = [ [x["audit_logid"], json.dumps(x)] for x in nad_list ]
+                MutiTypesInsets2SqlClass(table_name=WAF_ALERT_LOG_DETAILED_SQL_TABLE).arrays2sql(
+                    _detailed_list, columns_order="`audit_logid`,`detaild`"
+                )
+
 
         logging.info("插入【" + str(seccess_insert_num) + "】条新数据到访问日志SQL数据库成功")
 

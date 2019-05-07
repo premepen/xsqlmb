@@ -10,7 +10,11 @@ def test4():
     for x in datas1:
         print(x)
     pass
-
+"""
+delete from waf_access_log;
+delete from waf_alert_log;
+delete from alertlog_detail;
+"""
 
 if __name__ == '__main__':
     from xsqlmb.api.logstash.utils.get_table_columns import get_waf_access_log_columns

@@ -218,19 +218,23 @@ def convert_auditlog_detaild(audit_logid, audit_logid_datas=None):
     :param audit_logid_datas:
     :return:
     """
-    temp = {"audit_logid": audit_logid}
-    for x in audit_logid_datas:
-        # exec("""temp = dict(temp, **modsec_"""+ x["auditlog_signal"] +"""log_extract(x["auditlog_content"]))""")
-        if x["auditlog_signal"] == "A":
-            temp = dict(temp, **modsec_Alog_extract(x["auditlog_content"]))
-        if x["auditlog_signal"] == "B":
-            temp = dict(temp, **modsec_Blog_extract(x["auditlog_content"]))
-        if x["auditlog_signal"] == "F":
-            temp = dict(temp, **modsec_Flog_extract(x["auditlog_content"]))
-        if x["auditlog_signal"] == "H":
-            temp = dict(temp, **modsec_Hlog_extract(x["auditlog_content"]))
-    return temp
-
+    try:
+        temp = {"audit_logid": audit_logid}
+        for x in audit_logid_datas:
+            # exec("""temp = dict(temp, **modsec_"""+ x["auditlog_signal"] +"""log_extract(x["auditlog_content"]))""")
+            if x["auditlog_signal"] == "A":
+                temp = dict(temp, **modsec_Alog_extract(x["auditlog_content"]))
+            if x["auditlog_signal"] == "B":
+                temp = dict(temp, **modsec_Blog_extract(x["auditlog_content"]))
+            if x["auditlog_signal"] == "F":
+                temp = dict(temp, **modsec_Flog_extract(x["auditlog_content"]))
+            if x["auditlog_signal"] == "H":
+                temp = dict(temp, **modsec_Hlog_extract(x["auditlog_content"]))
+        return temp
+    except:
+        from ..scripts.get_common_logs import logging
+        logging.error("extract告警日志错误！" + str(audit_logid))
+        return None
 
 
 

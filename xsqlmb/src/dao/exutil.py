@@ -22,8 +22,8 @@ class MutiTypesInsets2SqlClass():
         """
         if len(array2) < 1:
             return False, "数据不足插入"
-        if len(array2[0]) != len(columns_order):
-            return False, "带插入对象数据列不匹配"
+        # if len(array2[0]) != len(columns_order):
+        #     return False, "带插入对象数据列不匹配"
 
         _sql_str_list = []
         for _item in array2:
@@ -37,12 +37,16 @@ class MutiTypesInsets2SqlClass():
         try:
             from  xsqlmb.src.ltool.sqlconn import sql_action
             sql_action(_query_sql)
+
+            return len(_sql_str_list)
         except:
             try:
                 from  xsqlmb.src.cfgs.logConfig import logging
             except:
                 import logging
             logging.info("导入数据库失败！")
+
+            return 0
 
     def arrays2sql2(self, dict_array, columns_order, keys_list):
         """
@@ -53,7 +57,8 @@ class MutiTypesInsets2SqlClass():
         :return:
         """
         if len(dict_array) < 1:
-            return False, "数据不足插入"
+            # return False, "数据不足插入"
+            return 0
 
         _sql_str_list = []
         for _item in dict_array:
@@ -69,6 +74,8 @@ class MutiTypesInsets2SqlClass():
         try:
             from  xsqlmb.src.ltool.sqlconn import sql_action
             sql_action(_query_sql)
+            return len(_sql_str_list)
+
         except:
             # 一般来说到不了下面这一步。
             try:
@@ -76,3 +83,5 @@ class MutiTypesInsets2SqlClass():
             except:
                 import logging
             logging.info("导入数据库失败！")
+
+            return 0

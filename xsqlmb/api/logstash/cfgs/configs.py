@@ -33,6 +33,7 @@ DateStramp = "_" + str(datetime.now().date()).replace("-","")
 
 WAF_ACCESS_LOG_SQL_TABLE = "waf_access_log"
 WAF_ALERT_LOG_SQL_TABLE = "waf_alert_log"
+WAF_ALERT_LOG_DETAILED_SQL_TABLE = "alertlog_detail"
 
 
 AccessLogSaveTableName = "accesslog" + DateStramp

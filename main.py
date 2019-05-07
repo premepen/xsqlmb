@@ -31,7 +31,7 @@ def test5():
 
 def test6():
     from xsqlmb.api.logstash.scripts.log_to_mysql import LogToSql
-    LogToSql(filename=os.path.join(DataDir, "xsqlmb",  "datas", "audit_modsec.log"), MAX_INSERT_NUM=100).modseclog_to_sql()
+    LogToSql(filename=os.path.join(DataDir, "xsqlmb",  "datas", "audit_modsec.log"), MAX_INSERT_NUM=500).modseclog_to_sql()
 
     print("ok")
 

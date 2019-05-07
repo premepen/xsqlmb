@@ -78,7 +78,7 @@ DROP TABLE IF EXISTS `alertlog_detail`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `alertlog_detail` (
   `audit_logid` varchar(100) NOT NULL,
- `detaild` longtext NOT NULL,
+ `detaild`  json DEFAULT NULL,
   PRIMARY KEY (`audit_logid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

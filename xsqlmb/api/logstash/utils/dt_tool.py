@@ -16,7 +16,7 @@ def get_pydt_based_logdt(logdt_str):
             minute=int(dt_matched.group(5)),
             second=int(dt_matched.group(6)),
         )
-        return datetime(**dt_kwargs)
+        return str(datetime(**dt_kwargs))
 
 
 def get_ua_and_os_from_User_Agent(ua_str):
@@ -35,3 +35,5 @@ def get_dt_by_str(dt_str = "2017-08-27 05:00:39"):
     parter = "(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+).*?"
     matched = [int(re.match(parter, dt_str).group(i+1)) for i in range(6)]
     return datetime(*matched)
+    # return datetime(*matched)
+

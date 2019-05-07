@@ -91,7 +91,8 @@ class TxTCommonLog():
                 logging.debug("ERROR-NO-AuditLogId!")
         modsec_detailed_logs = []
         for key, values in _modsec_txtlog_dict.items():
-            _detailed_log_txt = convert_aitemlog_to_wedetailed( audit_logid=key, audit_logid_datas=values )
+            #_detailed_log_txt = convert_aitemlog_to_wedetailed( audit_logid=key, audit_logid_datas=values )
+            _detailed_log_txt = convert_auditlog_detaild( audit_logid=key, audit_logid_datas=values )
             if _detailed_log_txt:
                 modsec_detailed_logs.append(_detailed_log_txt)
 
