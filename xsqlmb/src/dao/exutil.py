@@ -43,3 +43,36 @@ class MutiTypesInsets2SqlClass():
             except:
                 import logging
             logging.info("导入数据库失败！")
+
+    def arrays2sql2(self, dict_array, columns_order, keys_list):
+        """
+        数组对象导入到mysql
+        :param array2: 数组就是 Insert into 后面 values ({}) 这个对象
+        :param columns_order: 就是 insert into table({``,``}) 里面的对象。
+        :param keys_list: 字典插入时候需要的顺序key。
+        :return:
+        """
+        if len(dict_array) < 1:
+            return False, "数据不足插入"
+
+        _sql_str_list = []
+        for _item in dict_array:
+            _sql_str = "(\'" + "\',\'".join( [ str(_item[key]) for key in keys_list] ) + "\')"
+            _sql_str_list.append(_sql_str)
+
+        _query_sql = """insert into {table_name}({columns}) values {values_str};""".format(
+            values_str=", ".join([str(x) for x in _sql_str_list]),
+            table_name=self.table_name,
+            columns=columns_order
+        )
+
+        try:
+            from  xsqlmb.src.ltool.sqlconn import sql_action
+            sql_action(_query_sql)
+        except:
+            # 一般来说到不了下面这一步。
+            try:
+                from  xsqlmb.src.cfgs.logConfig import logging
+            except:
+                import logging
+            logging.info("导入数据库失败！")

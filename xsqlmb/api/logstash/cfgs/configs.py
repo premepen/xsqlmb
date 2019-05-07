@@ -16,6 +16,8 @@ MongoRuleConfig = dict(
     password=None
 )
 
+PcapDir = "/srv/waf_audit/pcaps/"
+
 ## 特殊标记; 有可能是域名也可能是local host; syslog 的发送方IP
 locate_fix = "localhost|syslog\.kac\.fun"
 ## Syslog-Ng 传递过程中增加的时间戳IP的格式
@@ -28,6 +30,9 @@ if SysLogHost=="localhost":
 # 每一个 MongoDB 都修改对应的日志存储为小的分集合。
 from datetime import datetime
 DateStramp = "_" + str(datetime.now().date()).replace("-","")
+
+WAF_ACCESS_LOG_SQL_TABLE = "waf_access_log"
+WAF_ALERT_LOG_SQL_TABLE = "waf_alert_log"
 
 
 AccessLogSaveTableName = "accesslog" + DateStramp
@@ -59,3 +64,7 @@ if sys.platform == 'win32':
     # AccessLogDir = os.path.join(LOG_DIR, "access.log")
     AccessLogDir = os.path.join(LOG_DIR, "waf.access.log")
     ModsecLogDir = os.path.join(LOG_DIR, "modsec_audit.log")
+    PcapDir = "e://pcaps/"
+
+if not os.path.exists(PcapDir):
+    os.makedirs(PcapDir)

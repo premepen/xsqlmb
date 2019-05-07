@@ -20,3 +20,20 @@
 ## 审计日志采集和生成响应的报表
 - 已经导入了对应的表格 sql文件。
 - 进行测试相关的入库查询的相关逻辑。
+
+
+## 需要增加的部分
+- 多线程mysql单条导入替代原来的insert_into many
+- 注意日志的形式 +0800 这种timelocal只能实用于当前形式CST
+
+```json 
+[{'audit_logid': 'DVIyfn1y', 'audit_time': datetime.datetime(2019, 4, 12, 7, 0, 19), 'uniq_id': '155505241927.186755', 'src_ip': '10.0.2.2', 'logsize': '46432', 'src_host': '10.0.2.2', 'server_port': '80', 'http_user_agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36', 'request_method': 'GET', 'request_url': '/index.php ', 'http_ver': 'HTTP/1.1', 'resp_code': '302', 'waf_serv': 'nginx', 'content_type': 'text/html; charset=UTF-8', 'hloginfo': [{'rule_id': '920350', 'matched_data': '192.168.2.161:57080', 'msg': 'Host header is a numeric IP address', 'file': '/etc/nginx/owasp-modsecurity-crs-3.0.2/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf', '_category': 'HTTP协议规范相关规则'}], 'category': 'HTTP协议规范相关规则'
+, 'msg': 'Host header is a numeric IP address'}]
+>>>>>>>>>>>>>>>>>>>>>>>>
+[{'audit_logid': 'MtrzgqvA', 'audit_time': datetime.datetime(2019, 4, 12, 7, 0, 25), 'uniq_id': '155505242587.557169', 'src_ip': '10.0.2.2', 'logsize': '46432', 'src_host': '10.0.2.2', 'server_port': '80', 'http_user_agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36', 'request_method': 'POST', 'request_url': '/login.php ', 'http_ver': 'HTTP/1.1', 'resp_code': '302', 'waf_serv': 'nginx', 'content_type': 'text/html; charset=UTF-8', 'hloginfo': [{'rule_id': '920350', 'matched_data': '192.168.2.161:57080', 'msg': 'Host header is a numeric IP address', 'file': '/etc/nginx/owasp-modsecurity-crs-3.0.2/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf', '_category': 'HTTP协议规范相关规则'}], 'category': 'HTTP协议规范相关规则
+', 'msg': 'Host header is a numeric IP address'}]
+>>>>>>>>>>>>>>>>>>>>>>>>
+[{'audit_logid': 'hv0RFdly', 'audit_time': datetime.datetime(2019, 4, 19, 15, 26, 32), 'uniq_id': '155565879231.921013', 'src_ip': '10.0.2.2', 'logsize': '54013', 'src_host': '10.0.2.2', 'server_port': '80', 'http_user_agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36', 'request_method': 'GET', 'request_url': '/index.php ', 'http_ver': 'HTTP/1.1', 'resp_code': '302', 'waf_serv': 'nginx', 'content_type': 'text/html; charset=UTF-8', 'hloginfo': [{'rule_id': '920350', 'matched_data': '192.168.2.161:57080', 'msg': 'Host header is a numeric IP address', 'file': '/etc/nginx/owasp-modsecurity-crs-3.0.2/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf', '_category': 'HTTP协议规范相关规则'}], 'category': 'HTTP协议规范相关规
+则', 'msg': 'Host header is a numeric IP address'}]
+ok
+``` 

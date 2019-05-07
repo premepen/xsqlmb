@@ -3,7 +3,7 @@ import re
 
 # from utils.mongo import MongoConn
 from xsqlmb.api.logstash.utils.dt_tool import get_ua_and_os_from_User_Agent
-from xsqlmb.api.logstash.opt.wt_parse import convert_aitemlog_to_wedetailed
+from xsqlmb.api.logstash.opt.wt_parse import convert_aitemlog_to_wedetailed, convert_auditlog_detaild
 from xsqlmb.api.logstash.cfgs.configs import SysLogFilterParten
 
 try:
@@ -22,13 +22,17 @@ class TxTCommonLog():
 
     def get_auditlogs(self):
         lines = []
-        with open(self.filename, "r", encoding="utf-8") as f:
+        with open(self.filename, "rb") as f:
             temp_lines = f.readlines()
             for line in temp_lines:
-                matched = re.match(SysLogFilterParten + "(.*)", line)
-                if matched:
-                    # lines.append(matched.group(1))
-                    lines.append(matched.group(2) + "\n")
+                try:
+                    matched = re.match(SysLogFilterParten + "(.*)", line.decode("utf-8") )
+                    if matched:
+                        # lines.append(matched.group(1))
+                        # 2019-5-2 syslog-ng发送切记这里是 2
+                        lines.append(matched.group(2) + "\n")
+                except:
+                    pass
             f.close()
         res = []
         partern = "---(.*?)---(.*?)--.*"
@@ -37,6 +41,7 @@ class TxTCommonLog():
         for line_index in range(len(lines)):
             data = re.match(partern, lines[line_index])
             if data:
+
                 if(middle_content == ""):
                     # 第一次进来了但是已经收集了中间的数据
                     temp_auditlog_id = data.group(1)
@@ -69,7 +74,6 @@ class TxTCommonLog():
             auditlog_endline=temp_auditlog_startline,
             auditlog_content="",
         ))
-
         return res
 
     def modseclog_to_detaild(self):
@@ -87,25 +91,30 @@ class TxTCommonLog():
                 logging.debug("ERROR-NO-AuditLogId!")
         modsec_detailed_logs = []
         for key, values in _modsec_txtlog_dict.items():
-            modsec_detailed_logs.append(
-                convert_aitemlog_to_wedetailed( audit_logid=key, audit_logid_datas=values ))
+            _detailed_log_txt = convert_aitemlog_to_wedetailed( audit_logid=key, audit_logid_datas=values )
+            if _detailed_log_txt:
+                modsec_detailed_logs.append(_detailed_log_txt)
 
         return modsec_detailed_logs
 
     def get_access_logs(self):
         lines = []
-        with open(self.filename, "r", encoding="utf-8") as f:
+        with open(self.filename, "rb") as f:
             temp_lines = f.readlines() # 整个文本的所有行
             for line in temp_lines:
-                matched = re.match(SysLogFilterParten + "(.*)", line)
-                if matched:
-                    lines.append(matched.group(2))
+                try:
+                    matched = re.match(SysLogFilterParten + "(.*)", line.decode("utf-8") )
+                    if matched:
+                        # lines.append(matched.group(1))
+                        lines.append(matched.group(2) + "\n")
+                except:
+                    pass
             f.close()
         # 先去掉`syslog`的发送日志头标识, 接下来才是常规的流程。
         res = []
-        for line in lines:
+        for _line in lines:
             import json
-            alog = json.loads(line)
+            alog = json.loads(_line)
             ua_dict = get_ua_and_os_from_User_Agent(alog['http_user_agent'])
             _temp = dict(alog, **ua_dict)
             res.append(_temp)

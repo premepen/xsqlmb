@@ -2,12 +2,14 @@
 import sys
 import re
 from xsqlmb.api.logstash.utils.dt_tool import get_pydt_based_logdt
+from xsqlmb.api.logstash.cfgs.configs import WAF_ACCESS_LOG_SQL_TABLE, WAF_ALERT_LOG_SQL_TABLE
 #from utils.django_module import django_setup
 try:
     from xsqlmb.src.cfgs.logConfig import logging
 except:
     import logging
 
+from uuid import uuid4
 from xsqlmb.api.logstash.scripts.get_common_logs import TxTCommonLog
 from xsqlmb.src.ltool.sqlconn import from_sql_get_data, sql_action
 
@@ -22,7 +24,7 @@ class LogToSql():
         pass
 
     def get_latest_accsslog(self):
-        datas, line = TxTCommonLog(filename=self.filename).get_access_logs3()
+        datas, line = TxTCommonLog(filename=self.filename).get_access_logs()
         return datas
 
     def get_latest_modseclog(self):
@@ -34,93 +36,70 @@ class LogToSql():
         p = Paginator(nad_datas, self.MAX_INSERT_NUM) # 分页列别
         page_count = p.num_pages  # 总页数
         seccess_insert_num = 0
-        # NginxAccessLogDetail.objects.all().delete()
+
+        from xsqlmb.api.logstash.utils.get_table_columns import get_waf_access_log_columns
+        cols = get_waf_access_log_columns()
+        _columns = "`" + "`, `".join(cols) + "`"
+        _keys = cols
+
         for x in [x+1 for x in range(page_count)]:
             nad_list = list(p.page(x).object_list)
-            try:
-                #NginxAccessLogDetail.objects.bulk_create([NginxAccessLogDetail(**x) for x in nad_list])
-                seccess_insert_num += self.MAX_INSERT_NUM
-            except:
-                for nad in nad_list:
-                    try:
-                       # NginxAccessLogDetail.objects.create(**nad)
-                        seccess_insert_num += 1
-                    except:
-                        pass
-                        ## 这里处理效率较低;后期优化 // 重复返回错误
+            from xsqlmb.src.dao.exutil import MutiTypesInsets2SqlClass
+            MutiTypesInsets2SqlClass(table_name = WAF_ACCESS_LOG_SQL_TABLE).arrays2sql2(
+            nad_list, columns_order=_columns, keys_list=_keys)
+            seccess_insert_num += len(nad_list)
+
         return seccess_insert_num
 
 
-    def accesslog_to_sql(self):
+    def accesslog_to_sql(self, local=False):
         nad_datas = []
-        have_saved_reqids = [x["request_id"] for x in from_sql_get_data("""select request_id from accesslog where time_local > DATE_SUB(NOW(), INTERVAL 2 HOUR);""")["data"] ]
-        for x in [y for y in self.get_latest_accsslog() if y["request_id"] \
-                not in have_saved_reqids]:
+        for x in [y for y in self.get_latest_accsslog() ]:
             obj = x.copy()
             try:
                 obj["time_local"] = get_pydt_based_logdt(re.match("(.*?)\s(.*)", obj["time_local"]).group(1))
+                obj["timestamp"] = obj["time_local"]
+                obj["request_id"] = uuid4()
+
+                obj["upstream_response_time"] = "0.01" if obj["upstream_response_time"] == "-" else "0.0"
+                obj["request_time"] = "0.01" if obj["upstream_response_time"] == "-" else "0.0"
             except:
-                # print(re.match("(.*?)\s(.*)", obj["time_local"]).group(1))
-                logging.warn("Error:存在AccessLog日志不一样的正则 " + obj["time_local"])
+                logging.error("Error:存在AccessLog日志不一样的正则 " + obj["time_local"])
+
                 continue
-            obj["server_port"] = self.server_port if "server_port" not in obj.keys() else 443
             nad_datas.append(obj)
         seccess_insert_num = self.many_insert2_accesslog(nad_datas)
         logging.info("插入【" + str(seccess_insert_num)  +"】条新数据到访问日志SQL数据库成功")
 
     def modseclog_to_sql(self):
-        from utils.django_module import django_setup
-        django_setup()
-        from datetime import datetime
+        # from datetime import datetime
+        # default_time = datetime(1995, 8, 14)
+        nad_datas = self.get_latest_modseclog()
 
-        default_time = datetime(1995, 8, 14)
-        from phaser1.models import ModsecLogDetail, ModSecLogPhaserHinfo
-        from wafmanage.utils.db_utils import from_sql_get_data
-        # have_saved_audit_logid = [x.audit_logid for x in ModsecLogDetail.objects.all()]
-        have_saved_audit_logid = [x["audit_logid"] for x in from_sql_get_data("""select audit_logid from modseclog where 
-        audit_time > DATE_SUB(NOW(), INTERVAL 120 second);""")["data"] ]
-        write_counts = 0 ## 记录写入的数值
-        for x in self.get_latest_modseclog():
-            ## 新增对象不可能存在重复; 所以把去重判别放在上面了
-            if x["audit_logid"] in have_saved_audit_logid:
-                continue
-            if x["audit_logid"] == '':
-                continue
-            item = ModsecLogDetail()
-            item.logsize = int(x["logsize"]) if "logsize" in x.keys() else 0
-            item.audit_logid = x["audit_logid"] if "audit_logid" in x.keys() else ""
-            item.http_user_agent = x["http_user_agent"] if "http_user_agent" in x.keys() else ""
-            item.http_ver = x["http_ver"] if "http_ver" in x.keys() else ""
-            item.src_host = x["src_host"] if "src_host" in x.keys() else ""
-            item.src_ip = x["src_ip"] if "src_ip" in x.keys() else ""
-            item.server_port = x["server_port"] if "server_port" in x.keys() else "" # 2018-11-16 add port
-            item.waf_serv = x["waf_serv"] if "waf_serv" in x.keys() else ""
-            item.audit_time = x["audit_time"] if "audit_time" in x.keys() else default_time
-            item.content_length = int(x["content_length"]) if "content_length" in x.keys() else 0
-            item.resp_code = int(x["resp_code"]) if "resp_code" in x.keys() else 0
-            item.uniq_id = x["uniq_id"] if "uniq_id" in x.keys() else ""
+        from django.core.paginator import Paginator
+        p = Paginator(nad_datas, self.MAX_INSERT_NUM)  # 分页列别
+        page_count = p.num_pages  # 总页数
+        seccess_insert_num = 0
 
-            item.request_url = x["request_url"][:253] if "request_url" in x.keys() else ""
-            item.request_method = x["request_method"] if "request_method" in x.keys() else ""
-            item.content_type = x["content_type"]  if "content_type" in x.keys() else ""
+        from xsqlmb.api.logstash.utils.get_table_columns import get_waf_alert_log_columns
+        cols = get_waf_alert_log_columns()
 
-            item.server_port = x["server_port"] if "server_port" in x.keys() else self.server_port
+        _columns = "`" + "`, `".join(cols) + "`"
+        _keys = cols
+
+        for x in [x + 1 for x in range(page_count)]:
             try:
-                item.save()
-                if "hloginfo" in x.keys():
-                    for y in x["hloginfo"]:
-                        hlogitem = ModSecLogPhaserHinfo.objects.create(**dict(
-                            rule_id=int(y["rule_id"]) if "rule_id" in y.keys() else 0,
-                            matched_data=y["matched_data"] if "matched_data" in y.keys() else "",
-                            msg=y["msg"][:225] if "msg" in y.keys() else ""
-                        ))
-                        item.hloginfo.add(hlogitem)
-
-                write_counts += 1
+                nad_list = list(p.page(x).object_list)
+                from xsqlmb.src.dao.exutil import MutiTypesInsets2SqlClass
+                MutiTypesInsets2SqlClass(table_name=WAF_ALERT_LOG_SQL_TABLE).arrays2sql2(
+                    nad_list, columns_order=_columns, keys_list=_keys)
+                seccess_insert_num += len(nad_list)
             except:
-                logging.info("该对象已存在")
-        logging.info("写入【"+str(write_counts)+"】条告警日志进入Mysql成功")
-        #print("3.1-写入【"+str(write_counts)+"】条告警日志进入Mysql成功")
+                logging.error("告警日志格式化存在键值对异常。")
+
+        logging.info("插入【" + str(seccess_insert_num) + "】条新数据到访问日志SQL数据库成功")
+
+
 
 
 

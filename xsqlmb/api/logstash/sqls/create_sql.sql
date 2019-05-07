@@ -4,10 +4,8 @@ DROP TABLE IF EXISTS `waf_alert_log`;
 CREATE TABLE `waf_alert_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `audit_logid` varchar(155) NOT NULL,
-  `logsize` int(11) NOT NULL,
   `http_user_agent` longtext NOT NULL,
   `http_ver` varchar(155) NOT NULL,
-  `src_host` varchar(155) NOT NULL,
   `src_ip` varchar(155) NOT NULL,
   `waf_serv` varchar(155) NOT NULL,
   `msg` varchar(155) NOT NULL,
@@ -22,23 +20,23 @@ CREATE TABLE `waf_alert_log` (
   `server_port` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `modseclog_audit_logid_1af5d08d_uniq` (`audit_logid`)
-) ENGINE=InnoDB AUTO_INCREMENT=55041 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10055 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
-DROP TABLE IF EXISTS `waf_modsec_hinfo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `waf_modsec_hinfo` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `audit_logid` varchar(155) NOT NULL,
-  `rule_id` int(11) NOT NULL,
-  `msg` varchar(255) NOT NULL,
-  `matched_data` longtext NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `rid_index` (`rule_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=76562 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+--DROP TABLE IF EXISTS `waf_modsec_hinfo`;
+--/*!40101 SET @saved_cs_client     = @@character_set_client */;
+--/*!40101 SET character_set_client = utf8 */;
+--CREATE TABLE `waf_modsec_hinfo` (
+--  `id` int(11) NOT NULL AUTO_INCREMENT,
+--  `audit_logid` varchar(155) NOT NULL,
+--  `rule_id` int(11) NOT NULL,
+--  `msg` varchar(255) NOT NULL,
+--  `matched_data` longtext NOT NULL,
+--  PRIMARY KEY (`id`),
+--  KEY `rid_index` (`rule_id`)
+--) ENGINE=InnoDB AUTO_INCREMENT=76562 DEFAULT CHARSET=utf8;
+--/*!40101 SET character_set_client = @saved_cs_client */;
 
 
 DROP TABLE IF EXISTS `waf_access_log`;
@@ -70,7 +68,17 @@ CREATE TABLE `waf_access_log` (
   `http_x_forwarded_for` varchar(255) NOT NULL,
   `server_port` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `request_id` (`request_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32012301 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `request_id_1af5d08d_uniq` (`request_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1111 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+DROP TABLE IF EXISTS `alertlog_detail`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `alertlog_detail` (
+  `audit_logid` varchar(100) NOT NULL,
+ `detaild` longtext NOT NULL,
+  PRIMARY KEY (`audit_logid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
