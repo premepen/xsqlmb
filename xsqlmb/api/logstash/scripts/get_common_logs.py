@@ -114,11 +114,15 @@ class TxTCommonLog():
         # 先去掉`syslog`的发送日志头标识, 接下来才是常规的流程。
         res = []
         for _line in lines:
-            import json
-            alog = json.loads(_line)
-            ua_dict = get_ua_and_os_from_User_Agent(alog['http_user_agent'])
-            _temp = dict(alog, **ua_dict)
-            res.append(_temp)
+            try:
+                import json
+                # alog = json.loads(_line.encode("utf-8").decode("utf-8"))
+                alog = json.loads(_line.replace("\\", "\\\\"))
+                ua_dict = get_ua_and_os_from_User_Agent(alog['http_user_agent'])
+                _temp = dict(alog, **ua_dict)
+                res.append(_temp)
+            except:
+                print(_line)
             #print(_temp)
         return res, len(temp_lines)
 

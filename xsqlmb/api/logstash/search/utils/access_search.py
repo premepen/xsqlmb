@@ -7,7 +7,7 @@ from ...cfgs.configs import WAF_ALERT_LOG_SQL_TABLE, WAF_ACCESS_LOG_SQL_TABLE
 
 def get_jl_accsslog(
         type="remote_addr",
-        accesslog_table="phaser1_apacheaccesslogdetail",
+        accesslog_table=WAF_ACCESS_LOG_SQL_TABLE,
         start_time=None,
         end_time=None,
         limit=10,
@@ -27,20 +27,16 @@ def get_jl_accsslog(
         return
 
     query_sql = """select {search_type}, count({search_type}) as c from (
-select id, remote_addr, remote_user, time_local, 
-  os, device, user_agent,status, substring_index(request, ' ', 1) as request_method,
-   substring_index(substring_index(request, ' ', 2), '?', 1) as request_url,  
-     substring_index(request, ' ', -1) as request_version, body_bytes_sent,       
-         substring_index(http_referer, '?', 1) as http_referer
-           from {accesslog_table} where time_local BETWEEN
-            '{start_time}' and '{end_time}' ) as accesslog 
+        select id, remote_addr, remote_user, time_local, 
+ os, device, user_agent,status, request_method, request_url, 'HTTP/1.1' as request_version, body_bytes_sent,       
+       http_referer from {accesslog_table} where time_local >='{start_time}' and time_local <= '{end_time}' ) as accesslog 
             group by {search_type} order by c desc limit {limit};""".format(
         search_type=type,
         accesslog_table=accesslog_table,
         limit=limit,
         start_time=start_time,
         end_time=end_time
-    )
+    ).replace("\n", " ")
     # from wafmanage.utils.db_utils import from_sql_get_data
 
     return query_sql, _types
@@ -55,7 +51,7 @@ def tj_bytes_timedelta(limit_bytes=1024,
                        daysdelta=90,
                        start_time=None,
                        end_time=None,
-                       accesslog_table="phaser1_apacheaccesslogdetail",
+                       accesslog_table=WAF_ACCESS_LOG_SQL_TABLE,
                        extra=None,
                        **kwargs):
     # _types_dict = dict(
@@ -81,15 +77,11 @@ def tj_bytes_timedelta(limit_bytes=1024,
     if extra:
         extra_coditions = " and lst={} ".format(extra)
 
-    query_sql = """select * from (
-    select remote_addr, lst, sum(body_bytes_sent) as count_bytes, count(remote_addr) as visit_times  from (
-      select id, remote_addr, remote_user, time_local, {type}(time_local) as lst,
-        os, device, user_agent,status, substring_index(request, ' ', 1) as request_method,
-         substring_index(substring_index(request, ' ', 2), '?', 1) as request_url,  
-         substring_index(request, ' ', -1) as request_version, body_bytes_sent,       
-             substring_index(http_referer, '?', 1) as http_referer
-               from {accesslog_table_name} where time_local >
-                '{start_time}' and time_local <='{end_time}' {remote_addr_partern}) as accesslog 
+    query_sql = """select * from (select remote_addr, lst, sum(body_bytes_sent) as count_bytes, count(remote_addr) as visit_times  from 
+    (select id, remote_addr, remote_user, time_local, {type}(time_local) as lst,
+        os, device, user_agent,status, request_method, request_url,  
+         'HTTP/1.1' as request_version, body_bytes_sent,       
+              http_referer from {accesslog_table_name} where time_local >'{start_time}' and time_local <='{end_time}' {remote_addr_partern}) as accesslog 
             group by remote_addr, lst order by lst desc, visit_times desc ) as local_t 
             where count_bytes > {limit_bytes} and visit_times > {limit_vtimes}  {extra_coditions};""".format(
         limit_bytes=limit_bytes,
@@ -123,9 +115,8 @@ def accsslog_search2(TableName=WAF_ACCESS_LOG_SQL_TABLE,
                     orderby_dt=True,
                     limit_static=False,
                     server_port=None):
-    query_sql = """select {search_tuple} from {TableName}) where id > 0 """.format(TableName=TableName,
-        search_tuple="id, \
-        remote_addr, \
+    query_sql = """select {search_tuple} from {TableName} where id > 0 """.format(TableName=TableName,
+        search_tuple="remote_addr, \
         remote_user, \
         time_local,\
          os, device,\
@@ -133,7 +124,7 @@ def accsslog_search2(TableName=WAF_ACCESS_LOG_SQL_TABLE,
           status, request_time, \
          request_method,\
           request_url, \
-          request_version,\
+          'HTTP/1.1' as request_version,\
           body_bytes_sent, \
           server_port, \
           http_referer ")
@@ -170,15 +161,15 @@ def accsslog_search2(TableName=WAF_ACCESS_LOG_SQL_TABLE,
     if user_agent:
         query_sql += "and user_agent='{}' ".format(user_agent)
 
-    if start_time or end_time:
-        if not start_time:
-            start_time = "2018-3-15"
-        if not end_time:
-            end_time = str(datetime.now().date())
 
-        query_sql += "and time_local between '{start_time}' and '{end_time}' ".format(
-            start_time=start_time, end_time=end_time
-        )
+    if not start_time:
+        start_time = "2018-3-15"
+    if not end_time:
+        end_time = str(datetime.now().date())
+
+    query_sql += "and time_local between '{start_time}' and '{end_time}' ".format(
+        start_time=start_time, end_time=end_time
+    )
 
     if body_bytes_sent:
         query_sql += "and body_bytes_sent>{}".format(body_bytes_sent)

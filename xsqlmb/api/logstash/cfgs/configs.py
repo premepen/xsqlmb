@@ -19,7 +19,7 @@ MongoRuleConfig = dict(
 PcapDir = "/srv/waf_audit/pcaps/"
 
 ## 特殊标记; 有可能是域名也可能是local host; syslog 的发送方IP
-locate_fix = "localhost|syslog\.kac\.fun"
+locate_fix = "localhost|syslog\.kac\.fun|\w+"
 ## Syslog-Ng 传递过程中增加的时间戳IP的格式
 SysLogFilterParten = "\w+\s+\d+\s\d+:\d+:\d+\s("+ locate_fix +"|\d+\.\d+\.\d+\.\d+)\s"
 ### 单机版本, 本机无视日志发送头的字符串 ###

@@ -9,8 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
 
-from xsqlmb.api.logstash.cfgs.configs import WAF_ACCESS_LOG_SQL_TABLE
-from xsqlmb.src.ltool.sqlconn import from_sql_get_data
+from .....src.ltool.sqlconn import from_sql_get_data
 from ..utils.access_search import accsslog_search2
 from ..utils.seclog_search import seclog_search2
 
@@ -20,7 +19,6 @@ def accsslog_search(request):
     data = request.data
 
     instance = dict(
-        TableName= WAF_ACCESS_LOG_SQL_TABLE,
         request_method= data["request_method"] if "request_method" in data.keys() else None,
         request_version=data["request_version"] if "request_version" in data.keys() else None,
         remote_addr=data["remote_addr"] if "remote_addr" in data.keys() else None,
@@ -39,9 +37,11 @@ def accsslog_search(request):
         end_time=data["end_time"] if "end_time" in data.keys() else None,
         orderby_dt=data["orderby_dt"] if "orderby_dt" in data.keys() else True,
     )
-
-    _objs = from_sql_get_data(accsslog_search2(**instance))["data"]
-
+    _sql = accsslog_search2(**instance)
+    try:
+        _objs = from_sql_get_data(_sql)["data"]
+    except:
+        return Response(data={"SQL_ERROR": _sql}, status=206)
     # return Response(_objs)
     ## 原来的版本就是直接获取的 _objs
     pager = int(data["page"]) if "page" in data.keys() else 1
@@ -63,7 +63,8 @@ def seclog_search(request):
         server_port=data["server_port"] if "server_port" in data.keys() else None,
         request_method=data["request_method"] if "request_method" in data.keys() else None,
         request_version=data["request_version"] if "request_version" in data.keys() else None,
-        src_host=data["src_host"] if "src_host" in data.keys() else None,
+        #src_host=data["src_host"] if "src_host" in data.keys() else None,
+        src_host=None,
         src_ip=data["src_ip"] if "src_ip" in data.keys() else None,
         request_url=data["request_url"] if "request_url" in data.keys() else None,
         category=data["category"] if "category" in data.keys() else None, # 分类
@@ -73,8 +74,11 @@ def seclog_search(request):
         start_time=data["start_time"] if "start_time" in data.keys() else None,
         end_time=data["end_time"] if "end_time" in data.keys() else None,
     )
-
-    _objs = from_sql_get_data(seclog_search2(**instance))["data"]
+    _sql = seclog_search2(**instance)
+    try:
+        _objs = from_sql_get_data(_sql)["data"]
+    except:
+        return Response({"SQL_ERROR":_sql})
     # return Response(_objs)
     ### 开始准备分页
 

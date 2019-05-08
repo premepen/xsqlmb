@@ -20,7 +20,7 @@ def jla_search1(request):
 
     instance = dict(
         type=data["type"] if "type" in data.keys() else "remote_addr",
-        accesslog_table=LocalAccessLogTable,
+        # accesslog_table=LocalAccessLogTable,
         daysdelta=int(data["daysdelta"]) if "daysdelta" in data.keys() else 90,
         limit=int(data["limit"]) if "limit" in data.keys() else 100,
         start_time=data["start_time"] if "start_time" in data.keys() else None,
@@ -30,8 +30,10 @@ def jla_search1(request):
     if instance["type"] not in _types:
         return Response({"stat": False}, {"reason":"输入类型错误"})
     # print(query_sql)
-    _objs = from_sql_get_data(query_sql)["data"]
-
+    try:
+        _objs = from_sql_get_data(query_sql)["data"]
+    except:
+        return Response(data={"ERROR": query_sql}, status=206)
     pager = int(data["page"]) if "page" in data.keys() else 1
     p = Paginator(_objs, 10)
     all_counts = p.count  # 对象总数
@@ -54,9 +56,9 @@ def jla_search2(request):
         limit_bytes=int(data["limit_bytes"]) if "limit_bytes" in data.keys() else 10240,
         limit_vtimes=int(data["limit_vtimes"]) if "limit_vtimes" in data.keys() else 10240,
         remote_addrs=data["remote_addrs"] if "remote_addrs" in data.keys() else None,
-        split_type=data["split_type"] if "split_type" in data.keys() else None,
+        split_type=data["split_type"] if "split_type" in data.keys() else "date",
 
-        accesslog_table=LocalAccessLogTable,
+        # accesslog_table=LocalAccessLogTable,
 
         daysdelta=int(data["daysdelta"]) if "daysdelta" in data.keys() else 90,
         limit=int(data["limit"]) if "limit" in data.keys() else 100,
@@ -64,10 +66,11 @@ def jla_search2(request):
         end_time=data["end_time"] if "end_time" in data.keys() else None,
         extra=data["extra"] if "extra" in data.keys() else None,
     )
-    query_sql = tj_bytes_timedelta(**instance)
-
-    _objs = from_sql_get_data(query_sql)["data"]
-
+    query_sql = tj_bytes_timedelta(**instance).replace("\n", " ")
+    try:
+        _objs = from_sql_get_data(query_sql)["data"]
+    except:
+        return Response(data={"ERROR":query_sql}, status=206)
     pager = int(data["page"]) if "page" in data.keys() else 1
     p = Paginator(_objs, 10)
     all_counts = p.count  # 对象总数

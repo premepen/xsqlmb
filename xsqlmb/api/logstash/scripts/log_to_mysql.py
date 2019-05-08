@@ -47,6 +47,7 @@ class LogToSql():
         for x in [x+1 for x in range(page_count)]:
             nad_list = list(p.page(x).object_list)
             from xsqlmb.src.dao.exutil import MutiTypesInsets2SqlClass
+
             MutiTypesInsets2SqlClass(table_name = WAF_ACCESS_LOG_SQL_TABLE).arrays2sql2(
             nad_list, columns_order=_columns, keys_list=_keys)
             seccess_insert_num += len(nad_list)
@@ -56,12 +57,17 @@ class LogToSql():
 
     def accesslog_to_sql(self, local=False):
         nad_datas = []
-        for x in [y for y in self.get_latest_accsslog() ]:
+        _accesslog_datas = self.get_latest_accsslog()
+        for x in _accesslog_datas:
             obj = x.copy()
             try:
                 obj["time_local"] = get_pydt_based_logdt(re.match("(.*?)\s(.*)", obj["time_local"]).group(1))
                 obj["timestamp"] = obj["time_local"]
-                obj["request_id"] = uuid4()
+
+                try:
+                    obj["request_id"] = obj["request_id"]
+                except:
+                    obj["request_id"] = uuid4()
 
                 obj["upstream_response_time"] = "0.01" if obj["upstream_response_time"] == "-" else "0.0"
                 obj["request_time"] = "0.01" if obj["upstream_response_time"] == "-" else "0.0"
@@ -71,6 +77,8 @@ class LogToSql():
                 continue
             nad_datas.append(obj)
         seccess_insert_num = self.many_insert2_accesslog(nad_datas)
+
+
         logging.info("插入【" + str(seccess_insert_num)  +"】条新数据到访问日志SQL数据库成功")
 
     def modseclog_to_sql(self):
@@ -105,8 +113,7 @@ class LogToSql():
                     _detailed_list, columns_order="`audit_logid`,`detaild`"
                 )
 
-
-        logging.info("插入【" + str(seccess_insert_num) + "】条新数据到访问日志SQL数据库成功")
+        logging.info("插入【" + str(seccess_insert_num) + "】条新数据到告警日志SQL数据库成功")
 
 
 

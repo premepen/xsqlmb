@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
+from phaser1.utils.mongod.utils.mongo import MongoConn
+from phaser1.utils.mongod.config import WafMongoConfig
 
 from xsqlmb.api.logstash.cfgs.configs import WAF_ACCESS_LOG_SQL_TABLE
 from xsqlmb.src.ltool.sqlconn import from_sql_get_data
@@ -15,8 +17,7 @@ SEARCH_CONDOTION_TABLE_NAME = "search_condition"
 
 
 def get_local_db():
-    from phaser1.apscheduler.utils.mongo import MongoConn
-    from phaser1.apscheduler.config import WafMongoConfig
+
     ldc = WafMongoConfig.copy()
     ldc["db_name"] = "waf"
     return MongoConn(ldc).db[SEARCH_CONDOTION_TABLE_NAME]

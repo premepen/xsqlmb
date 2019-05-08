@@ -81,7 +81,16 @@ def seclog_condition_search(request):
         audit_date_value=data["audit_date_value"] if "audit_date_value" in data.keys() else None, ## 聚类后的日期查看器
     )
     from wafmanage.utils.db_utils import from_sql_get_data
-    _objs = from_sql_get_data(seclog_search_condition(**instance))["data"]
+
+    query_sql = seclog_search_condition(**instance)
+    import logging
+    logging.info(instance)
+    try:
+        _objs = from_sql_get_data(query_sql)["data"]
+    except:
+        return Response(data={"ERROR":query_sql}, status=206)
+
+    _objs = from_sql_get_data(query_sql)["data"]
     # return Response(_objs)
     ## 原来的版本就是直接获取的 _objs
     pager = int(data["page"]) if "page" in data.keys() else 1
@@ -92,7 +101,7 @@ def seclog_condition_search(request):
     objs = pj.object_list
 
     return Response(
-        {"search_params": data, "res": objs, "page_count": page_count, "pager": pager, "all_counts": all_counts})
+        {"search_params": data, "sql":query_sql, "res": objs, "page_count": page_count, "pager": pager, "all_counts": all_counts})
 
 
 @api_view(['GET', 'POST'])
@@ -100,12 +109,7 @@ def seclog_condition_search(request):
 def seclog_detail_by_audlogid(request):
     data = request.GET if request.method == 'GET' else request.data
     audit_logid = data["audit_logid"]
-
-
     res_data = get_all_info_dependon_auditid(audit_logid=audit_logid)
-
-
-
     try:
         return Response({"datas": res_data})
     finally:
