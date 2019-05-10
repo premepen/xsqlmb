@@ -49,8 +49,9 @@ function install_modsecurity(){
     if [ ! -d $DEPLOY_PATH"/ModSecurity" ]; then
         cd $DEPLOY_PATH && git clone https://github.com/SpiderLabs/ModSecurity \
         &&  cd ModSecurity  \
-        &&  git checkout -b v3/master origin/v3/master   \
+        && { git checkout -b v3/master origin/v3/master }||{echo 'None git check'}  \
         &&  sh build.sh  \
+        && yum install https://archives.fedoraproject.org/pub/archive/fedora/linux/updates/23/x86_64/b/bison-3.0.4-3.fc23.x86_64.rpm \ 
         &&  git submodule init  \
         &&  git submodule update  \
         &&  ./configure \
@@ -80,15 +81,11 @@ function make_modsecurity_with_tengine(){
     ## 开始安装
     echo -e "\033[1;31m **** 开始编译安装结合 tengine+modsecurity **** \033[0m"
      cd  ${DEPLOY_PATH}/tengine-${TENGINE_VERSION} && \
-    ./configure --prefix=/usr/share/nginx   \
-       --dso-path=${DEPLOY_PATH}/tengine-${TENGINE_VERSION}/modules \
-
+    ./configure --prefix=/usr/share/nginx \
        --with-http_lua_module \
        --with-luajit-lib=/usr/local/lib/ \
        --with-luajit-inc=/usr/local/include/luajit-2.0/ \
-       --with-lua-inc=/usr/local/include/luajit-2.0/
-
-       --sbin-path=/usr/sbin/nginx  \
+       --with-lua-inc=/usr/local/include/luajit-2.0/ --sbin-path=/usr/sbin/nginx  \
        --modules-path=/usr/lib64/nginx/modules  \
        --conf-path=/etc/nginx/nginx.conf  \
        --error-log-path=/var/log/nginx/error.log  \
