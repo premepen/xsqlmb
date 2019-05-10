@@ -140,6 +140,7 @@ function modify_somebug(){
     mkdir -p /var/lib/nginx/tmp/;
     cp ${DEPLOY_PATH}/ModSecurity/unicode.mapping /etc/nginx ;
     ln -sv `find / -type f -name "libprofiler.so*" | grep /usr/local/lib` /lib64/libprofiler.so.0
+    ln -sv `find / -type f -name "libluajit-5.1.so*" | grep /usr/local/lib` /lib64/libluajit-5.1.so.2
     useradd -s /sbin/nologin -M nginx
 }
 
