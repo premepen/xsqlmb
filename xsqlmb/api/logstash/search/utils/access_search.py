@@ -116,7 +116,7 @@ def accsslog_search2(TableName=WAF_ACCESS_LOG_SQL_TABLE,
                     limit_static=False,
                     server_port=None):
     query_sql = """select {search_tuple} from {TableName} where id > 0 """.format(TableName=TableName,
-        search_tuple="remote_addr, \
+        search_tuple=" '-' as id,remote_addr, \
         remote_user, \
         time_local,\
          os, device,\

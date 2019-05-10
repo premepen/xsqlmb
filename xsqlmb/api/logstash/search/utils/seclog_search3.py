@@ -30,11 +30,11 @@ def seclog_search3(src_ip=None,
         # cate_condition = "having cate_id in (select cate_id from rulecate where category='{}') ".format(category)
         conditions = "and category='{}' ".format(category)
 
-    query_sql = """select src_ip, audit_date, count(category) as count_cate, category, max(audit_time) as last_audtime from (
+    query_sql = """select src_ip, audit_date, msg as cn_msg, count(category) as count_cate, category, max(audit_time) as last_audtime from (
     select {search_params} from {waf_alert_log}) as sect group by src_ip, audit_date, category order by last_audtime desc, src_ip  """.format(
         conditions=conditions,
         waf_alert_log=WAF_ALERT_LOG_SQL_TABLE,
-        search_params="src_ip, category, audit_time, {split_type}(audit_time) as audit_date ".format(split_type=split_type)
+        search_params="src_ip, msg, category, audit_time, {split_type}(audit_time) as audit_date ".format(split_type=split_type)
     )
 
     return query_sql + " ;"
@@ -120,7 +120,10 @@ def seclog_search_condition(src_ip=None,
         # cate_condition = "having cate_id in (select cate_id from rulecate where category='{}') ".format(category)
         conditions += "and category='{}' ".format(category)
 
-    query_sql = """select * from (select {search_params} from {waf_alert_log}) as sect where id>0 {conditions} """.format(
+    _no_use_data = """ , '-' as m_rid, '-' as matched_data, '-' as mc, '-' as cate_id, '-' as hid """
+
+    query_sql = """select *, msg as cn_msg {no_use_data} from (select {search_params} from {waf_alert_log}) as sect where id>0 {conditions} """.format(
+        no_use_data=_no_use_data, ## 兼容上一个版本
         conditions=conditions,
         waf_alert_log=WAF_ALERT_LOG_SQL_TABLE,
         search_params="*, {split_type}(audit_time) as audit_date".format(split_type=split_type)

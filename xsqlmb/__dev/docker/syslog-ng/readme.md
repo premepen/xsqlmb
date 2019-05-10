@@ -38,3 +38,14 @@ actanble/syslog bash
 
 ## 自己的最新镜像
 - actanble/syslog2
+
+
+## syslogNg with Mysql 
+```bash
+docker run -itd -P \ 
+-v /var/log/messages:/var/log/messages \ 
+-v /home/syssql.conf:/etc/syslog-ng/syslog-ng.conf \ 
+--name outsql balabit/syslog-ng:latest -edv
+```
+- [syslog-with-mysql.conf](./dst_mysql.conf)
+- [Mysql-schemer](./sylogsql.sql)

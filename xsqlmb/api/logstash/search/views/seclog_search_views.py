@@ -109,9 +109,11 @@ def seclog_condition_search(request):
 def seclog_detail_by_audlogid(request):
     data = request.GET if request.method == 'GET' else request.data
     audit_logid = data["audit_logid"]
-    res_data = get_all_info_dependon_auditid(audit_logid=audit_logid)
+    import json
+    res_data = json.loads(get_all_info_dependon_auditid(audit_logid=audit_logid))
+    res_data["id"]="cya_no_user_id_v2"
     try:
-        return Response({"datas": res_data})
+        return Response({"datas": [res_data]})
     finally:
         try:
             from phaser2.models import MsgStat
