@@ -14,9 +14,8 @@ function install_gperftools(){
 
 function install_luaJit(){
     cd ${DEPLOY_PATH} && \
-    wget http://luajit.org/download/LuaJIT-2.0.3.tar.gz && \
-    tar zvxf LuaJIT-2.0.3.tar.gz && \
-    cd LuaJIT-2.0.3/ && \
+    https://github.com/openresty/luajit2 && \
+    cd luajit2 && \
     make && make install
 }
 
@@ -84,8 +83,8 @@ function make_modsecurity_with_tengine(){
     ./configure --prefix=/usr/share/nginx \
        --with-http_lua_module \
        --with-luajit-lib=/usr/local/lib/ \
-       --with-luajit-inc=/usr/local/include/luajit-2.0/ \
-       --with-lua-inc=/usr/local/include/luajit-2.0/ --sbin-path=/usr/sbin/nginx  \
+       --with-luajit-inc=/usr/local/include/luajit-2.1/ \
+       --with-lua-inc=/usr/local/include/luajit-2.1/ --sbin-path=/usr/sbin/nginx  \
        --modules-path=/usr/lib64/nginx/modules  \
        --conf-path=/etc/nginx/nginx.conf  \
        --error-log-path=/var/log/nginx/error.log  \
