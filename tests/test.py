@@ -1,0 +1,25 @@
+x = {'audit_logid':
+         'WcuzgW8x',
+     'http_ver':
+         'HTTP/1.1',
+     'resp_code': '302',
+     'waf_serv': 'nginx',
+     'content_type': 'text/html',
+     'content_length': '158',
+     'hloginfo': [{'rule_id': '920300', 'matched_data': '', 'msg': 'Request Missing an Accept Header',
+                   'file': '/etc/nginx/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf',
+                   '_category': 'HTTP协议规范相关规则'},
+
+                  {'rule_id': '920300', 'matched_data': '', 'msg': 'Request Missing an Accept Header',
+                   'file': '/etc /nginx/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf',
+                   '_category': 'HTTP协议规范相关规则'},
+                  {'rule_id': '920300', 'matched_data': '', 'msg': 'Request Missing an Accept Header',
+                   'file': '/etc/nginx/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf',
+                   '_category': 'HTTP协议规范相关规则'}, {'rule_id': '93217 0',
+                                                  'matched_data': 'Matched Data: () { found within REQUEST_HEADERS:Referer: () { _; } >_[$($())] { echo 93e4r0-CVE-2014-6278: true; echo;echo; }',
+                                                  'msg': 'Remote Command Execution: Shellshock (CVE-2014-6271)',
+                                                  'file': '/etc/nginx/rules/REQUEST-932-APPLICATION-ATTACK-RCE.conf', '_category': '远程 命令执行'}],
+     'category': 'HTTP协议规范相关规则', 'msg': 'Request Missing an Accept Header',
+     'audit_time': '2019-05-11 15:38:10', 'uniq_id': '1575602 9044.705518',
+     'src_ip': '192.168.2.223', 'logsize': '57992', 'src_host': '192.168.2.223',
+     'server_port': '80'}
