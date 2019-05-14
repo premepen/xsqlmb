@@ -48,10 +48,7 @@ RUN cd ${DEPLOY_PATH} && git clone https://github.com/SpiderLabs/ModSecurity \
         && make && make install
 
 RUN echo -e "\033[46;30m *****完成安装和下载 Nginx-Modsecurity****** \033[0m"
-RUN wget https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended && \
-        mv modsecurity.conf-recommended  /etc/nginx/modsecurity.conf
 
-RUN wget https://github.com/SpiderLabs/owasp-modsecurity-crs/archive/v3.1.0.zip && unzip v3.1.0.zip .
 RUN echo -e "\033[1;31m **** 开始编译安装结合 tengine+modsecurity **** \033[0m"
 RUN cd  ${DEPLOY_PATH}/tengine-${TENGINE_VERSION} && \
     ./configure --prefix=/usr/share/nginx \
@@ -106,10 +103,18 @@ RUN cd  ${DEPLOY_PATH}/tengine-${TENGINE_VERSION} && \
        --with-ld-opt="-Wl,-z,relro -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-E"  \
        --add-module=../ModSecurity-nginx && make && make install
 
+RUN echo -e "\033[46;30m *****下载核心规则集****** \033[0m"
+RUN wget https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended && \
+        mv modsecurity.conf-recommended  /etc/nginx/modsecurity.conf
+RUN wget https://github.com/SpiderLabs/owasp-modsecurity-crs/archive/v3.1.0.zip && unzip v3.1.0.zip -d /opt/
+
+RUN echo -e "\033[46;30m *****修复一些安装经常出现的错误****** \033[0m"
 RUN mkdir -p /var/lib/nginx/tmp/;
 RUN cp ${DEPLOY_PATH}/ModSecurity/unicode.mapping /etc/nginx ;
 RUN ln -sv `find / -type f -name "libprofiler.so*" | grep /usr/local/lib` /lib64/libprofiler.so.0
 RUN ln -sv `find / -type f -name "libluajit-5.1.so*" | grep /usr/local/lib` /lib64/libluajit-5.1.so.2
 RUN useradd -s /sbin/nologin -M nginx
+
+RUN rm -rf ${DEPLOY_PATH}
 
 USER root
