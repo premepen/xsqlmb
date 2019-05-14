@@ -41,3 +41,44 @@ networks:
       driver: default
       config:
         - subnet: 192.168.132.0/24
+#
+#version: "2.2"
+#
+#services:
+#   mysql:
+#      container_name: mysql-server
+#      image: 'mysql:5.7'
+#      volumes:
+#        - /srv/docker/mysqldata2:/var/lib/mysql
+#        - ./mysql/mysql.conf.d:/etc/mysql/mysql.conf.d
+#      restart: always
+#      ports:
+#        - "3306:3306"
+#      environment:
+#       - MYSQL_USER=admin007
+#       - MYSQL_PASSWORD=myadmin@816
+#       - MYSQL_DATABASE=dbtest
+#       - MYSQL_ROOT_PASSWORD=test@1q2w2e4R
+#
+#      networks:
+#        customize_net:
+#          ipv4_address: 192.168.132.101
+#
+#   mongo:
+#      container_name: mongo
+#      image: 'mongo'
+#      volumes:
+#        - /home/docker/mongo_data:/data
+#      ports:
+#        - "27017:27017"
+#      networks:
+#        customize_net:
+#          ipv4_address: 192.168.132.77
+#
+#networks:
+#  customize_net:
+#    driver: bridge
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 192.168.132.0/24
