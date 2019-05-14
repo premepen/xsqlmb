@@ -1,20 +1,21 @@
 #!/bin/bash
-cd /usr/local/src/
-
-DEPLOY_PATH=/usr/local/src/nginx_waf
 
 TENGINE_VERSION=2.3.0
+DEPLOY_PATH=/usr/local/src/nginx_waf
+
+if [ ! -d ${DEPLOY_PATH} ] ; then mkdir -p  ${DEPLOY_PATH}; fi
 
 function install_gperftools(){
     echo -e "\033[1;31m **** 开始编译安装 google-gperftools **** \033[0m"
     ## 安装 gperftools
+    cd ${DEPLOY_PATH} && \
     git clone https://github.com/gperftools/gperftools \
     && cd gperftools && sh autogen.sh && ./configure && make && make install
 }
 
 function install_luaJit(){
     cd ${DEPLOY_PATH} && \
-    https://github.com/openresty/luajit2 && \
+    git clone https://github.com/openresty/luajit2 && \
     cd luajit2 && \
     make && make install
 }
@@ -37,9 +38,6 @@ function install_pre_utils(){
 ## 编译ModSecurity
 function install_modsecurity(){
     echo -e "\033[1;31m **** 开始安装Modsecurity **** \033[0m"
-    if [ ! -d "$DEPLOY_PATH" ] ; then
-        mkdir -p  "$DEPLOY_PATH";
-    fi
 
     if [ ! -d $DEPLOY_PATH"/ModSecurity-nginx" ]; then
         cd $DEPLOY_PATH && git clone https://github.com/SpiderLabs/ModSecurity-nginx.git ;
@@ -50,7 +48,7 @@ function install_modsecurity(){
         &&  cd ModSecurity  \
         && { git checkout -b v3/master origin/v3/master }||{echo 'None git check'}  \
         &&  sh build.sh  \
-        && yum install https://archives.fedoraproject.org/pub/archive/fedora/linux/updates/23/x86_64/b/bison-3.0.4-3.fc23.x86_64.rpm \
+        && yum install -y https://archives.fedoraproject.org/pub/archive/fedora/linux/updates/23/x86_64/b/bison-3.0.4-3.fc23.x86_64.rpm \
         &&  git submodule init  \
         &&  git submodule update  \
         &&  ./configure \
@@ -68,8 +66,8 @@ function get_common_modsecurity_conf(){
 function download_tengine(){
     echo -e "\033[1;33m ** 准备下载 tengine-${TENGINE_VERSION} ** \033[0m"
     if [ ! -d ${DEPLOY_PATH}/tengine-${TENGINE_VERSION} ]; then
-        cd $DEPLOY_PATH && wget wget https://github.com/alibaba/tengine/archive/${TENGINE_VERSION}.zip \
-                && unzip ${TENGINE_VERSION}.zip
+        cd $DEPLOY_PATH && wget https://github.com/alibaba/tengine/archive/${TENGINE_VERSION}.zip \
+                && unzip ${TENGINE_VERSION}.zip -d ${DEPLOY_PATH}
      else
         echo -e "\033[1;33m ** tengine-${TENGINE_VERSION} 已存在 ** \033[0m"
      fi
