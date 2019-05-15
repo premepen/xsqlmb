@@ -16,6 +16,11 @@ docker run -d -p 24224:24224 -p 24224:24224/udp \
 -v /srv/docker/fluentd/data:/fluentd/log actanble/fluentd:1.4
 ```
 
+## Mongo 创建Root用户
+```
+db.createUser({user:"admin007",pwd:"myadmin@816",roles:["root"]})
+```
+
 ## default_conf
 ```conf 
 <source>

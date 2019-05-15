@@ -18,6 +18,19 @@ def get_pydt_based_logdt(logdt_str):
         )
         return datetime(**dt_kwargs)
 
+def get_pydt2_based_nmap(logdt_str):
+    dt_matched = re.match("""\w+ (\w+) (\d+) (\d+):(\d+):(\d+) (\d+)""", logdt_str)
+    if dt_matched:
+        dt_kwargs = dict(
+            day=int(dt_matched.group(2)),
+            month=month_kv[dt_matched.group(1)],
+            year=int(dt_matched.group(6)),
+            hour=int(dt_matched.group(3)),
+            minute=int(dt_matched.group(4)),
+            second=int(dt_matched.group(5)),
+        )
+        return datetime(**dt_kwargs)
+
 
 def get_ua_and_os_from_User_Agent(ua_str):
     # 需要安装这个包的哦

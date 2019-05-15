@@ -12,10 +12,14 @@ class MongoConn(object):
                 # from config import MongoConfig
                 self.MONGODB_CONFIG = SysLogMongoDBConfig
             except:
-
-                self.MONGODB_CONFIG = dict(host='192.168.2.41', port=27017, db_name='fluent', username=None, password=None)
+                self.MONGODB_CONFIG = dict(host='192.168.2.17', port=17017, db_name='fluent', username="root", password="string123")
         # connect db
         try:
+
+            # uri = "mongodb://{username}:{password}{host}/?authSource={db}&authMechanism=SCRAM-SHA-1".format(
+            #
+            # )
+
             self.conn = pymongo.MongoClient(self.MONGODB_CONFIG['host'], self.MONGODB_CONFIG['port'])
             self.db = self.conn[self.MONGODB_CONFIG['db_name']]  # connect db
             self.username=self.MONGODB_CONFIG['username']
@@ -84,4 +88,5 @@ class MongoConn(object):
 
 if __name__ == '__main__':
     # MongoConn().show_data(table='waf_alert_log')
-    MongoConn().show_data(table='waf_access_log')
+    MongoConn().insert_data("test", [{"index": i} for i in range(200)])
+    MongoConn().show_data(table='test')
