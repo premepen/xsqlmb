@@ -2,5 +2,4 @@
 
 ```
 db.createUser({user: "root",pwd: "string123",roles: [ { role: "dbAdmin", db: "fluent" } ]});
-
 ```
