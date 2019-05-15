@@ -18,7 +18,25 @@ docker run -d -p 24224:24224 -p 24224:24224/udp \
 
 ## Mongo 创建Root用户
 ```
-db.createUser({user:"admin007",pwd:"myadmin@816",roles:["root"]})
+db.createUser({user:"admin007",pwd:"myadmin@816", roles: [ { role: "dbAdmin", db: "logs" }]})
+```
+### mongodb 用户说明
+```
+Read：允许用户读取指定数据库
+readWrite：允许用户读写指定数据库
+dbAdmin：允许用户在指定数据库中执行管理函数，如索引创建、删除，查看统计或访问system.profile
+userAdmin：允许用户向system.users集合写入，可以找指定数据库里创建、删除和管理用户
+clusterAdmin：只在admin数据库中可用，赋予用户所有分片和复制集相关函数的管理权限。
+readAnyDatabase：只在admin数据库中可用，赋予用户所有数据库的读权限
+readWriteAnyDatabase：只在admin数据库中可用，赋予用户所有数据库的读写权限
+userAdminAnyDatabase：只在admin数据库中可用，赋予用户所有数据库的userAdmin权限
+dbAdminAnyDatabase：只在admin数据库中可用，赋予用户所有数据库的dbAdmin权限。
+root：只在admin数据库中可用。超级账号，超级权限。
+--------------------- 
+作者：FinelyYang 
+来源：CSDN 
+原文：https://blog.csdn.net/xiaoxiangzi520/article/details/81094378 
+版权声明：本文为博主原创文章，转载请附上博文链接！
 ```
 
 ## default_conf
