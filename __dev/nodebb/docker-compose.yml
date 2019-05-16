@@ -1,0 +1,54 @@
+version: "2.2"
+
+services:
+   mongo:
+      container_name: mongo
+      image: 'mongo'
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=admin001
+        - MONGO_INITDB_ROOT_PASSWORD=112233..
+      volumes:
+        - /home/docker/mongo_data:/data
+      ports:
+        - "37017:27017"
+      networks:
+        customize_net:
+          ipv4_address: 192.168.12.77
+
+   nodebb:
+      container_name: nodebb
+      image: 'nodebb/docker'
+      restart: always
+      volumes:
+        - /home/docker/mongo_data:/data
+      ports:
+        - "4567:4567"
+      networks:
+        customize_net:
+          ipv4_address: 192.168.12.77
+
+   postgres:
+      container_name: postgresql
+      image: 'sameersbn/postgresql:10-1'
+      volumes:
+        - /srv/docker/postgresql:/var/lib/postgresql
+      restart: always
+      ports:
+        - "5432:5432"
+      environment:
+        - PG_PASSWORD=p@Ssw0rd
+        - DB_USER=dbuser
+        - DB_PASS=dbuser
+        - DB_NAME=nodebb,pj
+
+      networks:
+        customize_net:
+          ipv4_address: 192.168.12.32
+
+networks:
+  customize_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.12.0/24

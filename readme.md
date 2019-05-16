@@ -1,6 +1,21 @@
 # 当前版本[XMysql工具插件版](#)思路
 > - **2019-4-15 16:25**
 
+
+## 部署相关
+- [Tengine-with-Modsecurity.sh](./__dev/tengine/readme.md)
+- [Dockerfile-Tengine-with-luajit-Modsecurity](./__dev/tengine/deployments/Dockerfile)
+- [nsf](./__dev/nfs)
+- [fluentd](./__dev/fluentd/readme.md)
+- [syslog-ng](./__dev/zsyslog)
+- [Shadowsocks.sh](./__dev/ss.sh)
+- [Dockerfile](./__dev/pjblog/Dockerfile)
+- [NodeBB](./__dev/nodebb)
+- [docker-compose示例](./__dev/docker)
+- [Docker一键安装脚本](./__dev/install_docker.sh)
+- [Python一键安装脚本](./__dev/install_python.sh)
+
+
 ### 基本描述
 
 - 1, 管理对象的初始化
@@ -39,3 +54,6 @@
 
 ## 2019-5-15
 - 本工具的用途就是结合mysql存储和常见的日志处理工具; 例如处理日期文本等。
+
+
+
