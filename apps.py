@@ -1,8 +1,9 @@
+
 try:
     from django.apps import AppConfig
 except:
     AppConfig = object
 
 
-class Phaser2Config(AppConfig):
+class LocalAppConfig(AppConfig):
     name = 'xsqlmb'

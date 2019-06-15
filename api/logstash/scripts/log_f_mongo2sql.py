@@ -111,6 +111,7 @@ class LogToSql():
                 # MutiTypesInsets2SqlClass(table_name=WAF_ALERT_LOG_DETAILED_SQL_TABLE).arrays2sql(
                 #     _detailed_list, columns_order="`audit_logid`,`detaild`"
                 # )
+
                 _detailed_list = [dict(audit_logid=x["audit_logid"], detaild=json.dumps(x) ) for x in nad_list]
 
                 from xsqlmb.src.ltool.mongo import MongoConn

@@ -24,4 +24,4 @@ cat > /etc/shadowsocks.json << EOF
 
 EOF
 
-ssserver -s /etc/shadowsocks.json
+ssserver -c /etc/shadowsocks.json

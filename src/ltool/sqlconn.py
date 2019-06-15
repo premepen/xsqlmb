@@ -3,7 +3,6 @@ import pymysql
 from xsqlmb.src.cfgs.basicConfig import MPP_CONFIG
 
 
-
 def from_sql_get_data(sql):
     # Connect to the database
     connection = pymysql.connect(**MPP_CONFIG)
